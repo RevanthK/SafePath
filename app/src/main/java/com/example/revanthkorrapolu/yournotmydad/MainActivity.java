@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mMapView = (MapView) findViewById(R.id.map);
+        //mMapView = (MapView) findViewById(R.id.map);
 
         /*
         //create a simple marker symbol
