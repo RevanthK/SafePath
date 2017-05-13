@@ -34,7 +34,8 @@ dependencies {
     compile 'com.esri.arcgis.android:arcgis-android:10.2.9'
     testCompile 'junit:junit:4.12'
 
-    
+
     compile 'com.squareup.retrofit2:retrofit-converters:2.2.0'
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
+    compile 'com.pubnub:pubnub-gson:4.6.2'
 }
