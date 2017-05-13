@@ -33,4 +33,5 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.esri.arcgis.android:arcgis-android:10.2.9'
     testCompile 'junit:junit:4.12'
+
 }
