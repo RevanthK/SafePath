@@ -6,7 +6,7 @@ import java.util.List;
  * Created by hemanth on 5/13/17.
  */
 
-public class CrimeList {
+public class SpotCrimeList {
 
 
     private List<CrimesBean> crimes;
