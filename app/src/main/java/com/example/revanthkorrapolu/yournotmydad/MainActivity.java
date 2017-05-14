@@ -7,9 +7,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telecom.Call;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
+import com.edmodo.rangebar.RangeBar;
 import com.esri.arcgisruntime.geometry.SpatialReference;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
 import com.esri.arcgisruntime.mapping.Basemap;
@@ -34,7 +38,10 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity{
     boolean isMessagesOpen;
+    private TextView mRangeLeft;
+    private TextView mRangeRight;
     private FloatingActionButton mFab;
+    private RangeBar mRangeBar;
     private static final String TAG="MainActivity";
     private MapView mMapView;
     private final SpatialReference wgs84 = SpatialReference.create(4326);
@@ -44,6 +51,16 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mRangeLeft=(TextView)findViewById(R.id.left_range);
+        mRangeRight=(TextView)findViewById(R.id.right_range);
+        mRangeBar=(RangeBar)findViewById(R.id.rangebar);
+        mRangeBar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+            @Override
+            public void onIndexChangeListener(RangeBar rangeBar, int i, int i1) {
+                mRangeLeft.setText(Integer.toString(i));
+                mRangeRight.setText(Integer.toString(i1));
+            }
+        });
         PubNubClient.subscribe();
         isMessagesOpen=false;
         mFab=(FloatingActionButton)findViewById(R.id.fab);
@@ -82,7 +99,7 @@ public class MainActivity extends AppCompatActivity{
                     pointList.add(new Point(sp.getLon(), sp.getLat(), wgs84));
 
                 }
-
+                
                 addBuoyPoints(addGraphicsOverlay(mMapView));
             }
 
@@ -90,6 +107,8 @@ public class MainActivity extends AppCompatActivity{
             public void onFailure(retrofit2.Call<SpotCrimeList> call, Throwable t) {
             }
         });
+
+
 
 
 
