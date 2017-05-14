@@ -1,7 +1,6 @@
 package com.example.revanthkorrapolu.yournotmydad;
 
 import android.graphics.Color;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +10,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -32,13 +30,6 @@ import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
 import com.esri.arcgisruntime.symbology.TextSymbol;
 import com.example.revanthkorrapolu.yournotmydad.JSONSchema.NYCCrime;
 import com.example.revanthkorrapolu.yournotmydad.JSONSchema.SpotCrimeList;
-import com.pubnub.api.PubNub;
-import com.pubnub.api.callbacks.PNCallback;
-import com.pubnub.api.models.consumer.PNStatus;
-import com.pubnub.api.models.consumer.history.PNHistoryItemResult;
-import com.pubnub.api.models.consumer.history.PNHistoryResult;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -47,9 +38,6 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity{
     boolean isMessagesOpen;
-
-    private ConstraintLayout mConstraintLayout;
-    private LinearLayout mLinearLayout;
     private TextView mRangeLeft;
     private TextView mRangeRight;
     private FloatingActionButton mFab;
@@ -60,73 +48,65 @@ public class MainActivity extends AppCompatActivity{
     private ArrayList<Point> pointList = new ArrayList<Point>();
 
     @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_main);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        mRangeLeft=(TextView)findViewById(R.id.left_range);
+        mRangeRight=(TextView)findViewById(R.id.right_range);
+        mRangeBar=(RangeBar)findViewById(R.id.rangebar);
+        mRangeBar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
+            @Override
+            public void onIndexChangeListener(RangeBar rangeBar, int i, int i1) {
+                mRangeLeft.setText(Integer.toString(i));
+                mRangeRight.setText(Integer.toString(i1));
+            }
+        });
+        PubNubClient.subscribe(this.getApplicationContext());
+        isMessagesOpen=false;
+        mFab=(FloatingActionButton)findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isMessagesOpen){
+                    isMessagesOpen=false;
+                    rotateFabBackward();
 
-            mLinearLayout=(LinearLayout)findViewById(R.id.message_list);
-            mConstraintLayout=(ConstraintLayout)findViewById(R.id.map);
-            mRangeLeft=(TextView)findViewById(R.id.left_range);
-            mRangeRight=(TextView)findViewById(R.id.right_range);
-            mRangeBar=(RangeBar)findViewById(R.id.rangebar);
-            mRangeBar.setOnRangeBarChangeListener(new RangeBar.OnRangeBarChangeListener() {
-                @Override
-                public void onIndexChangeListener(RangeBar rangeBar, int i, int i1) {
-                    mRangeLeft.setText(Integer.toString(i));
-                    mRangeRight.setText(Integer.toString(i1));
+                }else{
+                    isMessagesOpen=true;
+                    rotateFabForward();
+                    PubNubClient.publish("What it dooo");
+
                 }
-            });
-            PubNubClient.subscribe(this);
-            isMessagesOpen=false;
-            mFab=(FloatingActionButton)findViewById(R.id.fab);
-            mFab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(isMessagesOpen){
-                        isMessagesOpen=false;
-                        rotateFabBackward();
-                        PubNubClient.publish("What it dooo");
-                        removeHistory();
+            }
+        });
 
+        // inflate MapView from layout
+        mMapView = (MapView) findViewById(R.id.mapView);
+        // create a map with the BasemapType topographic
+        ArcGISMap map = new ArcGISMap(Basemap.Type.STREETS_NIGHT_VECTOR, 40.7128, -74.0059, 11);
+        // set the map to be displayed in this view
+        mMapView.setMap(map);
 
+        // add graphics overlay to MapView.
+        GraphicsOverlay graphicsOverlay = addGraphicsOverlay(mMapView);
 
-                    }else{
-                        isMessagesOpen=true;
-                        rotateFabForward();
-                        displayHistory();
+        retrofit2.Call<SpotCrimeList> crimeServ = RetrofitClient.getSpotCrimes(40.7128, -74.0059);
+        crimeServ.enqueue(new Callback<SpotCrimeList>() {
+            @Override
+            public void onResponse(retrofit2.Call<SpotCrimeList> call, Response<SpotCrimeList> response) {
+                Log.d(TAG,response.body().getCrimes().toString());
+                for(SpotCrimeList.CrimesBean sp :response.body().getCrimes()){
+                    pointList.add(new Point(sp.getLon(), sp.getLat(), wgs84));
 
-
-                    }
-                }
-            });
-
-            // inflate MapView from layout
-            mMapView = (MapView) findViewById(R.id.mapView);
-            // create a map with the BasemapType topographic
-            ArcGISMap map = new ArcGISMap(Basemap.Type.STREETS_NIGHT_VECTOR, 40.7128, -74.0059, 11);
-            // set the map to be displayed in this view
-            mMapView.setMap(map);
-
-            // add graphics overlay to MapView.
-            GraphicsOverlay graphicsOverlay = addGraphicsOverlay(mMapView);
-
-            retrofit2.Call<SpotCrimeList> crimeServ = RetrofitClient.getSpotCrimes(40.7128, -74.0059);
-            crimeServ.enqueue(new Callback<SpotCrimeList>() {
-                @Override
-                public void onResponse(retrofit2.Call<SpotCrimeList> call, Response<SpotCrimeList> response) {
-                    Log.d(TAG,response.body().getCrimes().toString());
-                    for(SpotCrimeList.CrimesBean sp :response.body().getCrimes()){
-                        pointList.add(new Point(sp.getLon(), sp.getLat(), wgs84));
-
-                    }
-
-                    addBuoyPoints(addGraphicsOverlay(mMapView));
                 }
 
-                @Override
-                public void onFailure(retrofit2.Call<SpotCrimeList> call, Throwable t) {
-                }
-            });
+                addBuoyPoints(addGraphicsOverlay(mMapView));
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<SpotCrimeList> call, Throwable t) {
+            }
+        });
 
 
 
@@ -135,21 +115,16 @@ public class MainActivity extends AppCompatActivity{
 
 
 
-            //add some buoy positions to the graphics overlay
-            addBuoyPoints(graphicsOverlay);
-            //add boat trip polyline to graphics overlay
-            addBoatTrip(graphicsOverlay);
-            //add nesting ground polygon to graphics overlay
-            addNestingGround(graphicsOverlay);
-            //add text symbols and points to graphics overlay
-            addText(graphicsOverlay);
+        //add some buoy positions to the graphics overlay
+        addBuoyPoints(graphicsOverlay);
+        //add boat trip polyline to graphics overlay
+        addBoatTrip(graphicsOverlay);
+        //add nesting ground polygon to graphics overlay
+        addNestingGround(graphicsOverlay);
+        //add text symbols and points to graphics overlay
+        addText(graphicsOverlay);
 
-            PubNub pubNub=PubNubClient.getPubNub();
-
-
-
-
-        }
+    }
 
     @Override
     protected void onPause(){
@@ -378,17 +353,5 @@ public class MainActivity extends AppCompatActivity{
                 .setDuration(300L)
                 .setInterpolator(new OvershootInterpolator(10.0F))
                 .start();
-    }
-
-    public void displayHistory(){
-        for (TextView textView:PubNubClient.alerts){
-            if(textView.getParent()==null){
-                mLinearLayout.addView(textView);
-            }
-
-        }
-    }
-    public void removeHistory(){
-        mLinearLayout.removeAllViews();
     }
 }
