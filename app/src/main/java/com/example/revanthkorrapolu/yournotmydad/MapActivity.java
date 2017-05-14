@@ -1,10 +1,14 @@
 package com.example.revanthkorrapolu.yournotmydad;
 
 import android.graphics.Color;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telecom.Call;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.OvershootInterpolator;
 
 import com.esri.arcgisruntime.geometry.SpatialReference;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
@@ -28,8 +32,10 @@ import java.util.List;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG="MainActivity";
+public class MapActivity extends AppCompatActivity{
+    boolean isMessagesOpen;
+    private FloatingActionButton mFab;
+    private static final String TAG="MapActivity";
     private MapView mMapView;
     private final SpatialReference wgs84 = SpatialReference.create(4326);
     private ArrayList<Point> pointList = new ArrayList<Point>();
@@ -38,6 +44,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        PubNubClient.subscribe();
+        isMessagesOpen=false;
+        mFab=(FloatingActionButton)findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isMessagesOpen){
+                    isMessagesOpen=false;
+                    rotateFabBackward();
+                }else{
+                    isMessagesOpen=true;
+                    rotateFabForward();
+                }
+            }
+        });
 
         // inflate MapView from layout
         mMapView = (MapView) findViewById(R.id.mapView);
@@ -283,5 +304,24 @@ public class MainActivity extends AppCompatActivity {
 
         //create a polygon from the point collection
         return new Polygon(points);
+    }
+
+
+    public void rotateFabForward() {
+        ViewCompat.animate(mFab)
+                .rotation(-90.0F)
+                .withLayer()
+                .setDuration(300L)
+                .setInterpolator(new OvershootInterpolator(10.0F))
+                .start();
+    }
+
+    public void rotateFabBackward() {
+        ViewCompat.animate(mFab)
+                .rotation(0.0F)
+                .withLayer()
+                .setDuration(300L)
+                .setInterpolator(new OvershootInterpolator(10.0F))
+                .start();
     }
 }

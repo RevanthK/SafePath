@@ -26,7 +26,7 @@ public class RetrofitClient {
         return mRetrofit;
     }*/
 
-    public static Call<SpotCrimeList> getSpotCrimes(int lat, int long1){
+    public static Call<SpotCrimeList> getSpotCrimes(double lat, double long1){
 
         //getRetrofit();
         if(mSpotCrimeRetrofit==null){
@@ -36,7 +36,7 @@ public class RetrofitClient {
             mSpotCrimeService=mSpotCrimeRetrofit.create(CrimeService.class);
         }
 
-        Call<SpotCrimeList> call=mSpotCrimeService.getSpotCrimes(Integer.toString(lat),Integer.toString(long1),"4","privatekeyforspotcrimepublicusers-commercialuse-877.410.1607");
+        Call<SpotCrimeList> call=mSpotCrimeService.getSpotCrimes(Double.toString(lat),Double.toString(long1),"4","privatekeyforspotcrimepublicusers-commercialuse-877.410.1607");
         return call;
     }
 
