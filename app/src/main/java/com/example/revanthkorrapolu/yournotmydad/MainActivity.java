@@ -120,8 +120,8 @@ public class MainActivity extends AppCompatActivity {
         for(int i = 30; i>0; i=i-4) {
 
             SimpleMarkerSymbol MurdMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, 0x11ff0000, i);//Red
-            SimpleMarkerSymbol TheftMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.TRIANGLE, 0x11ffa500, i);//Orange
-            SimpleMarkerSymbol MinorMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.SQUARE, 0x11ffd700, i);//Yellow
+            SimpleMarkerSymbol TheftMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, 0x11ffa500, i);//Orange
+            SimpleMarkerSymbol MinorMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, 0x11ffd700, i);//Yellow
 
 
             for (Point p : pointList) {
