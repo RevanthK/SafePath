@@ -23,7 +23,6 @@ import com.esri.arcgisruntime.symbology.TextSymbol;
 import com.example.revanthkorrapolu.yournotmydad.JSONSchema.SpotCrimeList;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
         // inflate MapView from layout
         mMapView = (MapView) findViewById(R.id.mapView);
-        Log.e("piece","peace");
         // create a map with the BasemapType topographic
         ArcGISMap map = new ArcGISMap(Basemap.Type.STREETS_NIGHT_VECTOR, 40.7128, -74.0059, 11);
         // set the map to be displayed in this view
@@ -65,10 +63,9 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(retrofit2.Call<SpotCrimeList> call, Throwable t) {
-                Log.e("hello","fail");
             }
         });
-
+/*
         //add some buoy positions to the graphics overlay
         addBuoyPoints(graphicsOverlay);
         //add boat trip polyline to graphics overlay
@@ -77,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         addNestingGround(graphicsOverlay);
         //add text symbols and points to graphics overlay
         addText(graphicsOverlay);
+        */
     }
 
     @Override
@@ -118,15 +116,19 @@ public class MainActivity extends AppCompatActivity {
         Graphic buoyGraphic4 = new Graphic(buoy4Loc, buoyMarker);
         */
 
-        
 
-        for(int i = 10; i>0; i--) {
+        for(int i = 30; i>0; i=i-4) {
 
-            SimpleMarkerSymbol buoyMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.red(25*i), i);
+            SimpleMarkerSymbol MurdMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, 0x11ff0000, i);//Red
+            SimpleMarkerSymbol TheftMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.TRIANGLE, 0x11ffa500, i);//Orange
+            SimpleMarkerSymbol MinorMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.SQUARE, 0x11ffd700, i);//Yellow
+
 
             for (Point p : pointList) {
-                Graphic dot = new Graphic(p, buoyMarker);
+
+                Graphic dot = new Graphic(p, MurdMarker);
                 graphicOverlay.getGraphics().add(dot);
+
             }
 
         }
