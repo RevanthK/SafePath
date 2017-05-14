@@ -44,7 +44,7 @@ public class PubNubClient {
 
             @Override
             public void message(PubNub pubnub, PNMessageResult message) {
-                    Log.d(TAG,message.getMessage().getAsString());
+                    Log.d(TAG,message.getMessage().toString());
             }
 
             @Override
@@ -59,7 +59,7 @@ public class PubNubClient {
 
     public static void publish(String message){
         mPubNub.publish()
-                .message(Arrays.asList(message, "there"))
+                .message(Arrays.asList(message))
                 .channel("my_channel")
                 .shouldStore(true)
                 .usePOST(true)

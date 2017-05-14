@@ -24,6 +24,7 @@ import com.esri.arcgisruntime.geometry.Polyline;
 import com.esri.arcgisruntime.symbology.SimpleFillSymbol;
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
 import com.esri.arcgisruntime.symbology.TextSymbol;
+import com.example.revanthkorrapolu.yournotmydad.JSONSchema.NYCCrime;
 import com.example.revanthkorrapolu.yournotmydad.JSONSchema.SpotCrimeList;
 
 import java.util.ArrayList;
@@ -53,9 +54,12 @@ public class MapActivity extends AppCompatActivity{
                 if(isMessagesOpen){
                     isMessagesOpen=false;
                     rotateFabBackward();
+
                 }else{
                     isMessagesOpen=true;
                     rotateFabForward();
+                    PubNubClient.publish("What it dooo");
+
                 }
             }
         });
@@ -89,6 +93,19 @@ public class MapActivity extends AppCompatActivity{
                 Log.e("hello","fail");
             }
         });
+
+      /*RetrofitClient.getNYCCrimes().enqueue(new Callback<List<NYCCrime>>() {
+          @Override
+          public void onResponse(retrofit2.Call<List<NYCCrime>> call, Response<List<NYCCrime>> response) {
+              Log.d(TAG,response.body().toString());
+
+          }
+
+          @Override
+          public void onFailure(retrofit2.Call<List<NYCCrime>> call, Throwable t) {
+
+          }
+      });*/
 
         //add some buoy positions to the graphics overlay
         addBuoyPoints(graphicsOverlay);
