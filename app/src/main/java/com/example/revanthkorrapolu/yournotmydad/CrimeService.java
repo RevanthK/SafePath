@@ -14,7 +14,7 @@ import retrofit2.http.Query;
 public interface CrimeService {
 
     @GET("/crimes.json")
-    Call<SpotCrimeList> getSpotCrimes(@Query("lat") String lat, @Query("long") String longw, @Query("radius") String radius, @Query("key") String key);
+    Call<SpotCrimeList> getSpotCrimes(@Query("lat") String lat, @Query("lon") String longw, @Query("radius") String radius, @Query("key") String key);
 
     @GET("/resource/qb7u-rbmr.json")
     Call<NYCCrimeList> getNYCCrimes();
