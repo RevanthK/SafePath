@@ -1,10 +1,14 @@
 package com.example.revanthkorrapolu.yournotmydad;
 
 import android.graphics.Color;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telecom.Call;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.OvershootInterpolator;
 
 import com.esri.arcgisruntime.geometry.SpatialReference;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
@@ -20,6 +24,7 @@ import com.esri.arcgisruntime.geometry.Polyline;
 import com.esri.arcgisruntime.symbology.SimpleFillSymbol;
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
 import com.esri.arcgisruntime.symbology.TextSymbol;
+import com.example.revanthkorrapolu.yournotmydad.JSONSchema.NYCCrime;
 import com.example.revanthkorrapolu.yournotmydad.JSONSchema.SpotCrimeList;
 
 import java.util.ArrayList;
@@ -27,7 +32,9 @@ import java.util.ArrayList;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
+    boolean isMessagesOpen;
+    private FloatingActionButton mFab;
     private static final String TAG="MainActivity";
     private MapView mMapView;
     private final SpatialReference wgs84 = SpatialReference.create(4326);
@@ -37,6 +44,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        PubNubClient.subscribe();
+        isMessagesOpen=false;
+        mFab=(FloatingActionButton)findViewById(R.id.fab);
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isMessagesOpen){
+                    isMessagesOpen=false;
+                    rotateFabBackward();
+
+                }else{
+                    isMessagesOpen=true;
+                    rotateFabForward();
+                    PubNubClient.publish("What it dooo");
+
+                }
+            }
+        });
 
         // inflate MapView from layout
         mMapView = (MapView) findViewById(R.id.mapView);
@@ -65,7 +90,12 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(retrofit2.Call<SpotCrimeList> call, Throwable t) {
             }
         });
-/*
+
+
+
+
+
+
         //add some buoy positions to the graphics overlay
         addBuoyPoints(graphicsOverlay);
         //add boat trip polyline to graphics overlay
@@ -74,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         addNestingGround(graphicsOverlay);
         //add text symbols and points to graphics overlay
         addText(graphicsOverlay);
-        */
+
     }
 
     @Override
@@ -285,5 +315,24 @@ public class MainActivity extends AppCompatActivity {
 
         //create a polygon from the point collection
         return new Polygon(points);
+    }
+
+
+    public void rotateFabForward() {
+        ViewCompat.animate(mFab)
+                .rotation(-90.0F)
+                .withLayer()
+                .setDuration(300L)
+                .setInterpolator(new OvershootInterpolator(10.0F))
+                .start();
+    }
+
+    public void rotateFabBackward() {
+        ViewCompat.animate(mFab)
+                .rotation(0.0F)
+                .withLayer()
+                .setDuration(300L)
+                .setInterpolator(new OvershootInterpolator(10.0F))
+                .start();
     }
 }

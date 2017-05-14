@@ -1,8 +1,9 @@
 package com.example.revanthkorrapolu.yournotmydad;
 
-import com.example.revanthkorrapolu.yournotmydad.CrimeService;
-import com.example.revanthkorrapolu.yournotmydad.JSONSchema.NYCCrimeList;
+import com.example.revanthkorrapolu.yournotmydad.JSONSchema.NYCCrime;
 import com.example.revanthkorrapolu.yournotmydad.JSONSchema.SpotCrimeList;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -40,7 +41,7 @@ public class RetrofitClient {
         return call;
     }
 
-    public static Call<NYCCrimeList> getNYCCrimes(){
+    public static Call<List<NYCCrime>> getNYCCrimes(){
 
         //getRetrofit();
         if(mNYCRetrofit==null){
@@ -50,7 +51,7 @@ public class RetrofitClient {
             mNYCCrimeService=mNYCRetrofit.create(CrimeService.class);
         }
 
-        Call<NYCCrimeList> call=mNYCCrimeService.getNYCCrimes();
+        Call<List<NYCCrime>> call=mNYCCrimeService.getNYCCrimes();
         return call;
     }
 

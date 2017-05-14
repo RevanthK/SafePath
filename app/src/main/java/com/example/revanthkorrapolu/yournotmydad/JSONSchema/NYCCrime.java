@@ -4,43 +4,46 @@ package com.example.revanthkorrapolu.yournotmydad.JSONSchema;
  * Created by hemanth on 5/13/17.
  */
 
-public class NYCCrimeList {
+public class NYCCrime {
 
 
     /**
-     * cmplnt_num : 845348933
-     * law_cat_cd : VIOLATION
-     * cmplnt_fr_dt : 2017-03-31T00:00:00
-     * latitude : 40.638018389
-     * x_coord_cd : 1012423.0
-     * ofns_desc : HARRASSMENT 2
+     * cmplnt_num : 967264110
+     * law_cat_cd : MISDEMEANOR
+     * cmplnt_fr_dt : 2016-11-03T00:00:00
+     * latitude : 40.821271027
+     * x_coord_cd : 997571.0
+     * ofns_desc : PETIT LARCENY
      * prem_typ_desc : RESIDENCE - APT. HOUSE
-     * ky_cd : 578
-     * cmplnt_fr_tm : 23:30:00
+     * ky_cd : 341
+     * cmplnt_fr_tm : 16:24:00
+     * cmplnt_to_tm : 10:30:00
      * rpt_dt : 2017-03-31T00:00:00
-     * boro_nm : BROOKLYN
-     * y_coord_cd : 171737.0
-     * pd_desc : HARASSMENT,SUBD 3,4,5
-     * pd_cd : 638.0
+     * boro_nm : MANHATTAN
+     * y_coord_cd : 238489.0
+     * pd_desc : PETIT LARCENY-CHECK FROM MAILB
+     * pd_cd : 347.0
      * crm_atpt_cptd_cd : COMPLETED
      * juris_desc : N.Y. POLICE DEPT
      * loc_of_occur_desc : INSIDE
-     * addr_pct_cd : 69.0
-     * lat_lon : {"latitude":"40.638018389","needs_recoding":false,"longitude":"-73.898491201"}
-     * longitude : -73.898491201
-     * cmplnt_to_tm : 23:30:00
-     * cmplnt_to_dt : 2017-03-31T00:00:00
-     * hadevelopt : HAMMEL
-     * parks_nm : ST. JOHN'S RECREATION CENTER
+     * cmplnt_to_dt : 2017-01-31T00:00:00
+     * addr_pct_cd : 30.0
+     * lat_lon : {"latitude":"40.821271027","needs_recoding":false,"longitude":"-73.951872345"}
+     * longitude : -73.951872345
+     * hadevelopt : AUDUBON
+     * parks_nm : TANAHEY PLAYGROUND
      */
 
     private String cmplnt_num;
     private String law_cat_cd;
     private String cmplnt_fr_dt;
     private String latitude;
+    private String x_coord_cd;
     private String ofns_desc;
     private String prem_typ_desc;
     private String ky_cd;
+    private String cmplnt_fr_tm;
+    private String cmplnt_to_tm;
     private String rpt_dt;
     private String boro_nm;
     private String y_coord_cd;
@@ -49,11 +52,10 @@ public class NYCCrimeList {
     private String crm_atpt_cptd_cd;
     private String juris_desc;
     private String loc_of_occur_desc;
+    private String cmplnt_to_dt;
     private String addr_pct_cd;
     private LatLonBean lat_lon;
     private String longitude;
-    private String cmplnt_to_tm;
-    private String cmplnt_to_dt;
     private String hadevelopt;
     private String parks_nm;
 
@@ -89,6 +91,14 @@ public class NYCCrimeList {
         this.latitude = latitude;
     }
 
+    public String getX_coord_cd() {
+        return x_coord_cd;
+    }
+
+    public void setX_coord_cd(String x_coord_cd) {
+        this.x_coord_cd = x_coord_cd;
+    }
+
     public String getOfns_desc() {
         return ofns_desc;
     }
@@ -111,6 +121,22 @@ public class NYCCrimeList {
 
     public void setKy_cd(String ky_cd) {
         this.ky_cd = ky_cd;
+    }
+
+    public String getCmplnt_fr_tm() {
+        return cmplnt_fr_tm;
+    }
+
+    public void setCmplnt_fr_tm(String cmplnt_fr_tm) {
+        this.cmplnt_fr_tm = cmplnt_fr_tm;
+    }
+
+    public String getCmplnt_to_tm() {
+        return cmplnt_to_tm;
+    }
+
+    public void setCmplnt_to_tm(String cmplnt_to_tm) {
+        this.cmplnt_to_tm = cmplnt_to_tm;
     }
 
     public String getRpt_dt() {
@@ -177,6 +203,14 @@ public class NYCCrimeList {
         this.loc_of_occur_desc = loc_of_occur_desc;
     }
 
+    public String getCmplnt_to_dt() {
+        return cmplnt_to_dt;
+    }
+
+    public void setCmplnt_to_dt(String cmplnt_to_dt) {
+        this.cmplnt_to_dt = cmplnt_to_dt;
+    }
+
     public String getAddr_pct_cd() {
         return addr_pct_cd;
     }
@@ -201,22 +235,6 @@ public class NYCCrimeList {
         this.longitude = longitude;
     }
 
-    public String getCmplnt_to_tm() {
-        return cmplnt_to_tm;
-    }
-
-    public void setCmplnt_to_tm(String cmplnt_to_tm) {
-        this.cmplnt_to_tm = cmplnt_to_tm;
-    }
-
-    public String getCmplnt_to_dt() {
-        return cmplnt_to_dt;
-    }
-
-    public void setCmplnt_to_dt(String cmplnt_to_dt) {
-        this.cmplnt_to_dt = cmplnt_to_dt;
-    }
-
     public String getHadevelopt() {
         return hadevelopt;
     }
@@ -235,9 +253,9 @@ public class NYCCrimeList {
 
     public static class LatLonBean {
         /**
-         * latitude : 40.638018389
+         * latitude : 40.821271027
          * needs_recoding : false
-         * longitude : -73.898491201
+         * longitude : -73.951872345
          */
 
         private String latitude;

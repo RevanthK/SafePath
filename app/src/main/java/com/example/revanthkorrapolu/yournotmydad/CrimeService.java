@@ -1,7 +1,9 @@
 package com.example.revanthkorrapolu.yournotmydad;
 
-import com.example.revanthkorrapolu.yournotmydad.JSONSchema.NYCCrimeList;
+import com.example.revanthkorrapolu.yournotmydad.JSONSchema.NYCCrime;
 import com.example.revanthkorrapolu.yournotmydad.JSONSchema.SpotCrimeList;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -17,7 +19,7 @@ public interface CrimeService {
     Call<SpotCrimeList> getSpotCrimes(@Query("lat") String lat, @Query("lon") String longw, @Query("radius") String radius, @Query("key") String key);
 
     @GET("/resource/qb7u-rbmr.json")
-    Call<NYCCrimeList> getNYCCrimes();
+    Call<List<NYCCrime>> getNYCCrimes();
 
 
 
