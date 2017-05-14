@@ -3,6 +3,8 @@ package com.example.revanthkorrapolu.yournotmydad;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telecom.Call;
+import android.util.Log;
 
 import com.esri.arcgisruntime.geometry.SpatialReference;
 import com.esri.arcgisruntime.mapping.ArcGISMap;
@@ -18,11 +20,19 @@ import com.esri.arcgisruntime.geometry.Polyline;
 import com.esri.arcgisruntime.symbology.SimpleFillSymbol;
 import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
 import com.esri.arcgisruntime.symbology.TextSymbol;
+import com.example.revanthkorrapolu.yournotmydad.JSONSchema.SpotCrimeList;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-
+    private static final String TAG="MainActivity";
     private MapView mMapView;
     private final SpatialReference wgs84 = SpatialReference.create(4326);
+    private ArrayList<Point> pointList = new ArrayList<Point>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,12 +41,34 @@ public class MainActivity extends AppCompatActivity {
 
         // inflate MapView from layout
         mMapView = (MapView) findViewById(R.id.mapView);
+        Log.e("piece","peace");
         // create a map with the BasemapType topographic
-        ArcGISMap map = new ArcGISMap(Basemap.Type.OCEANS, 56.075844, -2.681572, 11);
+        ArcGISMap map = new ArcGISMap(Basemap.Type.STREETS_NIGHT_VECTOR, 40.7128, -74.0059, 11);
         // set the map to be displayed in this view
         mMapView.setMap(map);
+
         // add graphics overlay to MapView.
         GraphicsOverlay graphicsOverlay = addGraphicsOverlay(mMapView);
+
+        retrofit2.Call<SpotCrimeList> crimeServ = RetrofitClient.getSpotCrimes(40.7128, -74.0059);
+        crimeServ.enqueue(new Callback<SpotCrimeList>() {
+            @Override
+            public void onResponse(retrofit2.Call<SpotCrimeList> call, Response<SpotCrimeList> response) {
+                Log.d(TAG,response.body().getCrimes().toString());
+                for(SpotCrimeList.CrimesBean sp :response.body().getCrimes()){
+                    pointList.add(new Point(sp.getLon(), sp.getLat(), wgs84));
+
+                }
+
+                addBuoyPoints(addGraphicsOverlay(mMapView));
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<SpotCrimeList> call, Throwable t) {
+                Log.e("hello","fail");
+            }
+        });
+
         //add some buoy positions to the graphics overlay
         addBuoyPoints(graphicsOverlay);
         //add boat trip polyline to graphics overlay
@@ -68,23 +100,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addBuoyPoints(GraphicsOverlay graphicOverlay) {
+        /*
         //define the buoy locations
         Point buoy1Loc = new Point(-2.712642647560347, 56.062812566811544, wgs84);
         Point buoy2Loc = new Point(-2.6908416959572303, 56.06444173689877, wgs84);
         Point buoy3Loc = new Point(-2.6697273884990937, 56.064250073402874, wgs84);
         Point buoy4Loc = new Point(-2.6395150461199726, 56.06127916736989, wgs84);
+        */
         //create a marker symbol
-        SimpleMarkerSymbol buoyMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.RED, 10);
+
+
+        /*
         //create graphics
         Graphic buoyGraphic1 = new Graphic(buoy1Loc, buoyMarker);
         Graphic buoyGraphic2 = new Graphic(buoy2Loc, buoyMarker);
         Graphic buoyGraphic3 = new Graphic(buoy3Loc, buoyMarker);
         Graphic buoyGraphic4 = new Graphic(buoy4Loc, buoyMarker);
+        */
+
+        
+
+        for(int i = 10; i>0; i--) {
+
+            SimpleMarkerSymbol buoyMarker = new SimpleMarkerSymbol(SimpleMarkerSymbol.Style.CIRCLE, Color.red(25*i), i);
+
+            for (Point p : pointList) {
+                Graphic dot = new Graphic(p, buoyMarker);
+                graphicOverlay.getGraphics().add(dot);
+            }
+
+        }
+        /*
         //add the graphics to the graphics overlay
         graphicOverlay.getGraphics().add(buoyGraphic1);
         graphicOverlay.getGraphics().add(buoyGraphic2);
         graphicOverlay.getGraphics().add(buoyGraphic3);
         graphicOverlay.getGraphics().add(buoyGraphic4);
+        */
     }
 
     private void addText(GraphicsOverlay graphicOverlay) {
