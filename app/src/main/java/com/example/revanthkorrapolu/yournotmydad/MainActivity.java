@@ -33,10 +33,10 @@ import java.util.List;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MapActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity{
     boolean isMessagesOpen;
     private FloatingActionButton mFab;
-    private static final String TAG="MapActivity";
+    private static final String TAG="MainActivity";
     private MapView mMapView;
     private final SpatialReference wgs84 = SpatialReference.create(4326);
     private ArrayList<Point> pointList = new ArrayList<Point>();
