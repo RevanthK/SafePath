@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity{
                     pointList.add(new Point(sp.getLon(), sp.getLat(), wgs84));
 
                 }
-                
+
                 addBuoyPoints(addGraphicsOverlay(mMapView));
             }
 
