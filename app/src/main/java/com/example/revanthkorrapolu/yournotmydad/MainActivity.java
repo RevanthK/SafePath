@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity{
         //add to the graphic overlay
         graphicOverlay.getGraphics().add(boatTripGraphic);
     }
-
+    
     private void addNestingGround(GraphicsOverlay graphicOverlay) {
         //define the polygon for the nesting ground
         Polygon nestingGround = getNestingGroundGeometry();
