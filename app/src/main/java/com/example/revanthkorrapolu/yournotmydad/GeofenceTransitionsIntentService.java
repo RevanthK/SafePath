@@ -1,13 +1,7 @@
 package com.example.revanthkorrapolu.yournotmydad;
 
 import android.app.IntentService;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Intent;
-import android.content.Context;
-import android.support.v7.app.NotificationCompat;
-import android.support.v7.app.NotificationCompat.Builder;
 import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
@@ -36,7 +30,13 @@ public class GeofenceTransitionsIntentService extends IntentService {
             // Get the geofences that were triggered. A single event can trigger
             // multiple geofences.
             List triggeringGeofences = geofencingEvent.getTriggeringGeofences();
+           for(int i=0;i<triggeringGeofences.size();i++){
+               Geofence geofence=(Geofence)triggeringGeofences.get(i);
 
+               PubNubClient.text("6096491171","Your son just entered a dangerous area. Please text him to make sure he is ok.");
+               PubNubClient.text("7326628487","You just entered a dangerous area. Guide yourself to a safe location using the app.");
+
+           }
             // Send notification and log the transition details.
 
         } else {

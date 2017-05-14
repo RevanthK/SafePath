@@ -1,6 +1,11 @@
 package com.example.revanthkorrapolu.yournotmydad;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.graphics.Color;
+import android.provider.SyncStateContract;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -30,13 +35,22 @@ import com.esri.arcgisruntime.symbology.SimpleLineSymbol;
 import com.esri.arcgisruntime.symbology.TextSymbol;
 import com.example.revanthkorrapolu.yournotmydad.JSONSchema.NYCCrime;
 import com.example.revanthkorrapolu.yournotmydad.JSONSchema.SpotCrimeList;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Result;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, ResultCallback{
+    private static int GEOFENCE_RADIUS=50;
     boolean isMessagesOpen;
     private TextView mRangeLeft;
     private TextView mRangeRight;
@@ -46,11 +60,39 @@ public class MainActivity extends AppCompatActivity{
     private MapView mMapView;
     private final SpatialReference wgs84 = SpatialReference.create(4326);
     private ArrayList<Point> pointList = new ArrayList<Point>();
+    ArrayList<Geofence> mGeofenceList = new ArrayList<>();
+    GoogleApiClient mGoogleApiClient;
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        try {
+            LocationServices.GeofencingApi.addGeofences(mGoogleApiClient, getGeofencingRequest(), getGeofencePendingIntent());
+        }catch (SecurityException e){
+            Log.e(TAG,"Error adding geofences");
+        }
+        }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onResult(@NonNull Result result) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mGoogleApiClient=new GoogleApiClient.Builder(this).addApi(LocationServices.API).addOnConnectionFailedListener(this
+        ).addConnectionCallbacks(this).build();
         mRangeLeft=(TextView)findViewById(R.id.left_range);
         mRangeRight=(TextView)findViewById(R.id.right_range);
         mRangeBar=(RangeBar)findViewById(R.id.rangebar);
@@ -95,10 +137,40 @@ public class MainActivity extends AppCompatActivity{
             @Override
             public void onResponse(retrofit2.Call<SpotCrimeList> call, Response<SpotCrimeList> response) {
                 Log.d(TAG,response.body().getCrimes().toString());
+                int i=0;
                 for(SpotCrimeList.CrimesBean sp :response.body().getCrimes()){
                     pointList.add(new Point(sp.getLon(), sp.getLat(), wgs84));
+                    mGeofenceList.add(new Geofence.Builder()
+                            .setRequestId(Integer.toString(i))
+
+                            .setCircularRegion(
+                                    sp.getLat(),
+                                    sp.getLon(),
+                                    GEOFENCE_RADIUS
+                            )
+                            .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                                    Geofence.GEOFENCE_TRANSITION_EXIT)
+                            .setLoiteringDelay(3000)
+                            .build());
+                    i++;
 
                 }
+                mGeofenceList.add(new Geofence.Builder()
+                        .setRequestId(Integer.toString(i))
+
+                        .setCircularRegion(
+                                40.709516,
+                                -73.986568,
+                                GEOFENCE_RADIUS
+                        )
+                        .setExpirationDuration(Geofence.NEVER_EXPIRE)
+                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                                Geofence.GEOFENCE_TRANSITION_EXIT)
+                        .setLoiteringDelay(3000)
+                        .build());
+                mGoogleApiClient.connect();
+
 
                 addBuoyPoints(addGraphicsOverlay(mMapView));
             }
@@ -107,13 +179,6 @@ public class MainActivity extends AppCompatActivity{
             public void onFailure(retrofit2.Call<SpotCrimeList> call, Throwable t) {
             }
         });
-
-
-
-
-
-
-
 
         //add some buoy positions to the graphics overlay
         addBuoyPoints(graphicsOverlay);
@@ -124,6 +189,29 @@ public class MainActivity extends AppCompatActivity{
         //add text symbols and points to graphics overlay
         addText(graphicsOverlay);
 
+
+
+
+    }
+
+
+    private PendingIntent getGeofencePendingIntent() {
+        // Reuse the PendingIntent if we already have it.
+       /* if (mGeofencePendingIntent != null) {
+            return mGeofencePendingIntent;
+        }*/
+        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
+        // calling addGeofences() and removeGeofences().
+        return PendingIntent.getService(this, 0, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);
+    }
+
+    private GeofencingRequest getGeofencingRequest() {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.addGeofences(mGeofenceList);
+        return builder.build();
     }
 
     @Override
