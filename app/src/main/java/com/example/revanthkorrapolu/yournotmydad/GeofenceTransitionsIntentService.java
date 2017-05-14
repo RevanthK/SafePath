@@ -38,7 +38,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
             List triggeringGeofences = geofencingEvent.getTriggeringGeofences();
 
             // Send notification and log the transition details.
-            
+
         } else {
             // Log the error.
             Log.e("hello", "geofence_transition_invalid_type");
